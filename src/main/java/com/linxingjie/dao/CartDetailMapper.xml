@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.linxingjie.dao.CartDetailMapper" >
+  <resultMap id="BaseResultMap" type="com.linxingjie.pojo.CartDetail" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="cid" property="cid" jdbcType="INTEGER" />
+    <result column="gid" property="gid" jdbcType="INTEGER" />
+    <result column="count" property="count" jdbcType="INTEGER" />
+    <result column="creattime" property="creattime" jdbcType="VARCHAR" />
+    <result column="reserved" property="reserved" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <resultMap id="myBaseMap" type="com.linxingjie.vo.CartModel">
+    <id column="id" property="id"></id>
+    <result column="count" property="count"></result>
+    <result column="cid" property="cid"></result>
+    <association property="goods" javaType="com.linxingjie.pojo.Goods">
+      <id property="id" column="id1"></id>
+      <result property="name" column="name"></result>
+      <result property="tid" column="tid"></result>
+      <result property="price" column="price"></result>
+      <result property="puttime" column="puttime"></result>
+      <result property="score" column="score"></result>
+      <result property="describe" column="describe>"></result>
+
+    </association>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, cid, gid, count, creattime, reserved
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="myBaseMap">
+    SELECT cd.id, cd.cid, cd.count,g.id id1,g.name,g.tid,g.price,g.puttime, g.score,g.describe FROM tb_cartdetail cd
+   LEFT JOIN tb_goods g on cd.gid = g.id
+    WHERE cd.id = #{id}
+  </select>
+
+  <select id="selectByGidAndCid" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tb_cartdetail
+    where gid = #{gid} and cid = #{cid}
+  </select>
+
+  <select id="selectByCid" resultMap="myBaseMap">
+   SELECT cd.id, cd.cid, cd.count,g.id id1,g.name,g.tid,g.price,g.puttime, g.score,g.describe FROM tb_cartdetail cd
+   LEFT JOIN tb_goods g on cd.gid = g.id
+    WHERE cd.cid = #{cid}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from tb_cartdetail
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <delete id="clearCartByCGid">
+     delete from tb_cartdetail
+    where cid = #{cid} and gid = #{gid}
+  </delete>
+
+  <insert id="insert" parameterType="com.linxingjie.pojo.CartDetail" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_cartdetail (cid, gid, count, 
+      creattime, reserved)
+    values (#{cid}, #{gid}, #{count},
+      now(), #{reserved})
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="com.linxingjie.pojo.CartDetail" >
+    update tb_cartdetail
+    set cid = #{cid,jdbcType=INTEGER},
+      gid = #{gid,jdbcType=INTEGER},
+      count = #{count,jdbcType=INTEGER},
+      creattime = #{creattime,jdbcType=VARCHAR},
+      reserved = #{reserved,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateByCGid">
+     update tb_cartdetail
+    set
+      count = count + #{num}
+    where cid = #{cid} and gid = #{gid}
+  </update>
+</mapper>

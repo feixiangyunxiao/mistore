@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.linxingjie.dao.OrderMapper" >
+  <resultMap id="BaseResultMap" type="com.linxingjie.pojo.Order" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="money" property="money" jdbcType="INTEGER" />
+    <result column="flag" property="flag" jdbcType="INTEGER" />
+    <result column="creattime" property="creattime" jdbcType="TIMESTAMP" />
+    <association property="address" javaType="com.linxingjie.pojo.RecAddress">
+      <id column="aid" property="id"></id>
+      <result column="name" property="name"></result>
+      <result column="phone" property="phone"></result>
+      <result column="detail" property="detail"></result>
+    </association>
+  </resultMap>
+  <resultMap id="myBaseMap" type="com.linxingjie.vo.OrderModel">
+  <id column="orderid" property="id"></id>
+    <result column="money" property="money"></result>
+    <result column="creattime" property="creattime"></result>
+    <result column="flag" property="flag"></result>
+    <association property="recAddress" javaType="com.linxingjie.pojo.RecAddress">
+     <id column="aid" property="id"></id>
+      <result column="name" property="name"></result>
+      <result column="detail" property="detail"></result>
+      <result column="phone" property="phone"></result>
+    </association>
+    <collection property="goods" ofType="com.linxingjie.pojo.Goods">
+      <id column="gid" property="id"></id>
+      <result column="gname" property="name"></result>
+      <result column="price" property="price"></result>
+      <result column="puttime" property="puttime"></result>
+      <result column="score" property="score"></result>
+      <result column="photo" property="photo"></result>
+      <result column="gflag" property="flag"></result>
+    </collection>
+    <collection property="counts" ofType="com.linxingjie.vo.Count">
+      <result column="count" property="count"></result>
+    </collection>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, money, aid, uid, flag, creattime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_order
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from tb_order
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.linxingjie.pojo.Order" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_order (money, aid, uid, 
+      flag, creattime)
+    values (#{money,jdbcType=INTEGER}, #{aid,jdbcType=INTEGER}, #{uid,jdbcType=INTEGER}, 
+      #{flag,jdbcType=TINYINT},now())
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="com.linxingjie.pojo.Order" >
+    update tb_order
+    set money = #{money,jdbcType=INTEGER},
+      aid = #{aid,jdbcType=INTEGER},
+      uid = #{uid,jdbcType=INTEGER},
+      flag = #{flag,jdbcType=TINYINT},
+      creattime = #{creattime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    from tb_order
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectByOid" resultMap="myBaseMap">
+   SELECT ord.id orderid, ord.money,ord.flag flag, ord.creattime,ad.id aid, ad.`name` name,ad.phone phone,ad.detail detail,gd.id gid,gd.`name` gname,gd.flag gflag,gd.price,gd.photo,gd.score,ordd.count,gd.puttime FROM tb_order ord LEFT JOIN tb_orderdetail ordd
+on ord.id = ordd.oid
+LEFT JOIN tb_goods gd
+on gd.id = ordd.gid
+LEFT JOIN tb_recaddress ad
+on ord.aid = ad.id
+WHERE ord.id = #{oid}
+ </select>
+
+  <select id="orderList" resultMap="BaseResultMap">
+    SELECT od.id,od.money,od.flag,od.creattime,ad.id aid,ad.name,ad.phone,ad.detail FROM tb_order od LEFT JOIN tb_recaddress ad
+on od.aid = ad.id
+  </select>
+
+</mapper>

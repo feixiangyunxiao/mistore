@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.linxingjie.dao.GoodsMapper" >
+  <resultMap id="BaseResultMap" type="com.linxingjie.pojo.Goods" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="tid" property="tid" jdbcType="INTEGER" />
+    <result column="puttime" property="puttime" jdbcType="DATE" />
+    <result column="downtime" property="downtime" jdbcType="DATE" />
+    <result column="creattime" property="creattime" jdbcType="DATE" />
+    <result column="price" property="price" jdbcType="INTEGER" />
+    <result column="score" property="score" jdbcType="INTEGER" />
+    <result column="photo" property="photo" jdbcType="VARCHAR" />
+    <result column="flag" property="flag" jdbcType="INTEGER" />
+    <result column="uid" property="uid" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.linxingjie.pojo.Goods" extends="BaseResultMap" >
+    <result column="describe" property="describe" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name, tid, puttime, downtime, creattime, price, score, photo, flag, uid
+  </sql>
+  <sql id="Blob_Column_List" >
+    `describe`
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from tb_goods
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll"  resultMap="ResultMapWithBLOBs">
+
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from tb_goods
+  </select>
+
+  <select id="selectByName" parameterType="java.lang.String" resultType="java.lang.String">
+    select name from tb_goods where name = #{name}
+  </select>
+
+  <select id="showGoodsByTid" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from tb_goods where tid = #{tid}
+  </select>
+
+
+  <insert id="insert" parameterType="com.linxingjie.pojo.Goods">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_goods (name, tid, puttime,
+    downtime, creattime, price,
+    score, photo, flag,
+    uid, `describe`)
+    values (#{name,jdbcType=VARCHAR}, #{tid,jdbcType=INTEGER}, #{puttime,jdbcType=DATE},
+    #{downtime,jdbcType=DATE},now(), #{price,jdbcType=INTEGER},
+    #{score,jdbcType=INTEGER}, #{photo,jdbcType=VARCHAR}, #{flag,jdbcType=INTEGER},
+    #{uid,jdbcType=INTEGER}, #{describe,jdbcType=LONGVARCHAR})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.linxingjie.pojo.Goods" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_goods
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="tid != null" >
+        tid,
+      </if>
+      <if test="puttime != null" >
+        puttime,
+      </if>
+      <if test="downtime != null" >
+        downtime,
+      </if>
+      <if test="creattime == null" >
+        creattime,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="score != null" >
+        score,
+      </if>
+      <if test="photo != null" >
+        photo,
+      </if>
+      <if test="flag != null" >
+        flag,
+      </if>
+      <if test="uid != null" >
+        uid,
+      </if>
+      <if test="describe != null" >
+        describe,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="tid != null" >
+        #{tid,jdbcType=INTEGER},
+      </if>
+      <if test="puttime != null" >
+        #{puttime,jdbcType=DATE},
+      </if>
+      <if test="downtime != null" >
+        #{downtime,jdbcType=DATE},
+      </if>
+      <if test="true" >
+        now(),
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=INTEGER},
+      </if>
+      <if test="score != null" >
+        #{score,jdbcType=INTEGER},
+      </if>
+      <if test="photo != null" >
+        #{photo,jdbcType=VARCHAR},
+      </if>
+      <if test="flag != null" >
+        #{flag,jdbcType=INTEGER},
+      </if>
+      <if test="uid != null" >
+        #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="describe != null" >
+        #{describe,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.linxingjie.pojo.Goods" >
+    update tb_goods
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="tid != null" >
+        tid = #{tid,jdbcType=INTEGER},
+      </if>
+      <if test="puttime != null" >
+        puttime = #{puttime,jdbcType=DATE},
+      </if>
+      <if test="downtime != null" >
+        downtime = #{downtime,jdbcType=DATE},
+      </if>
+      <if test="creattime != null" >
+        creattime = #{creattime,jdbcType=DATE},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=INTEGER},
+      </if>
+      <if test="score != null" >
+        score = #{score,jdbcType=INTEGER},
+      </if>
+      <if test="photo != null" >
+        photo = #{photo,jdbcType=VARCHAR},
+      </if>
+      <if test="flag != null" >
+        flag = #{flag,jdbcType=INTEGER},
+      </if>
+      <if test="uid != null" >
+        uid = #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="describe != null" >
+        describe = #{describe,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

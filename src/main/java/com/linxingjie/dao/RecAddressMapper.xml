@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.linxingjie.dao.RecAddressMapper" >
+  <resultMap id="BaseResultMap" type="com.linxingjie.pojo.RecAddress" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+  <result column="name" property="name" jdbcType="VARCHAR" />
+  <result column="phone" property="phone" jdbcType="VARCHAR" />
+  <result column="pid" property="pid" jdbcType="INTEGER" />
+  <result column="cityid" property="cityid" jdbcType="INTEGER" />
+  <result column="countryid" property="countryid" jdbcType="INTEGER" />
+  <result column="detail" property="detail" jdbcType="VARCHAR" />
+  <result column="orderlevel" property="orderlevel" jdbcType="INTEGER" />
+  <result column="uid" property="uid" jdbcType="INTEGER" />
+  <result column="reserved" property="reserved" jdbcType="VARCHAR" />
+</resultMap>
+  <resultMap id="myBaseMap" type="com.linxingjie.pojo.RecAddress">
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="pid" property="pid" jdbcType="INTEGER" />
+    <result column="cityid" property="cityid" jdbcType="INTEGER" />
+    <result column="countryid" property="countryid" jdbcType="INTEGER" />
+    <result column="detail" property="detail" jdbcType="VARCHAR" />
+    <result column="orderlevel" property="orderlevel" jdbcType="INTEGER" />
+    <result column="uid" property="uid" jdbcType="INTEGER" />
+    <result column="reserved" property="reserved" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="PCC_address" type="com.linxingjie.vo.PCC_address">
+    <id column="id" property="id" jdbcType="INTEGER"/>
+    <result column="name" property="name"></result>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name, phone, pid, cityid, countryid, detail, orderlevel, uid, reserved
+  </sql>
+
+  <insert id="insert" parameterType="com.linxingjie.pojo.RecAddress" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_recaddress (name, phone, pid, 
+      cityid, countryid, detail, 
+      orderlevel, uid, reserved
+      )
+    values (#{name,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{pid,jdbcType=INTEGER}, 
+      #{cityid,jdbcType=INTEGER}, #{countryid,jdbcType=INTEGER}, #{detail,jdbcType=VARCHAR}, 
+      #{orderlevel,jdbcType=INTEGER}, #{uid,jdbcType=INTEGER}, #{reserved,jdbcType=VARCHAR}
+      )
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="com.linxingjie.pojo.RecAddress" >
+    update tb_recaddress
+    set name = #{name,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      pid = #{pid,jdbcType=INTEGER},
+      cityid = #{cityid,jdbcType=INTEGER},
+      countryid = #{countryid,jdbcType=INTEGER},
+      detail = #{detail,jdbcType=VARCHAR},
+      orderlevel = #{orderlevel,jdbcType=INTEGER},
+      creattime = #{creattime,jdbcType=VARCHAR},
+      reserved = #{reserved,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectAllByUid" resultMap="BaseResultMap">
+    select  <include refid="Base_Column_List" /> from tb_recaddress where uid = #{uid} order by orderlevel
+  </select>
+
+  <select id="selectAllPro" resultMap="PCC_address">
+    select id, `name` from t_province
+  </select>
+  <select id="selectByPid" resultMap="PCC_address">
+     select id, `name` from t_city where pid = #{pid}
+  </select>
+  <select id="selectByCid" resultMap="PCC_address">
+    select id, `name` from t_county where cityid = #{cid}
+  </select>
+</mapper>

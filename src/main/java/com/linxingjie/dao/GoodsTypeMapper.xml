@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.linxingjie.dao.GoodsTypeMapper" >
+  <resultMap id="BaseResultMap" type="com.linxingjie.pojo.GoodsType" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="level" property="level" jdbcType="INTEGER" />
+    <result column="parentid" property="parentid" jdbcType="INTEGER" />
+    <result column="flag" property="flag" jdbcType="INTEGER" />
+  </resultMap>
+
+
+  <sql id="Base_Column_List" >
+    id, name, level, parentid, flag
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_goodstype
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+
+
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from tb_goodstype
+  </select>
+
+  <select id="selectByParentId" resultMap="BaseResultMap" parameterType="Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from tb_goodstype where parentid = #{parentid}
+  </select>
+
+  <select id="selectAllFirst" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from tb_goodstype where parentid = 0
+  </select>
+
+  <select id="seleByLevelAndName" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from tb_goodstype
+   <where>
+     <if test="level != null">
+       level = #{level}
+     </if>
+     <if test="name != null">
+       <bind name="bindeName" value="'%'+name+'%'"/>
+       and name like #{bindeName}
+     </if>
+   </where>
+
+  </select>
+
+
+  <insert id="insert" parameterType="com.linxingjie.pojo.GoodsType" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_goodstype (name, level, parentid, 
+      flag)
+    values (#{name,jdbcType=VARCHAR}, #{level,jdbcType=INTEGER}, #{parentid,jdbcType=INTEGER}, 
+      #{flag,jdbcType=INTEGER})
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.linxingjie.pojo.GoodsType" >
+    update tb_goodstype
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="level != null" >
+        level = #{level,jdbcType=INTEGER},
+      </if>
+      <if test="parentid != null" >
+        parentid = #{parentid,jdbcType=INTEGER},
+      </if>
+      <if test="flag != null" >
+        flag = #{flag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

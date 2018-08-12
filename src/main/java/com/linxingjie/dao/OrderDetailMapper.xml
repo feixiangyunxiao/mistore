@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.linxingjie.dao.OrderDetailMapper" >
+  <resultMap id="BaseResultMap" type="com.linxingjie.pojo.OrderDetail" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="oid" property="oid" jdbcType="INTEGER" />
+    <result column="gid" property="gid" jdbcType="INTEGER" />
+    <result column="count" property="count" jdbcType="INTEGER" />
+    <result column="money" property="money" jdbcType="INTEGER" />
+    <result column="creattime" property="creattime" jdbcType="TIMESTAMP" />
+    <result column="reserved" property="reserved" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, oid, gid, count, money, creattime, reserved
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_orderdetail
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from tb_orderdetail
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.linxingjie.pojo.OrderDetail" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into tb_orderdetail (oid, gid, count, 
+      money, creattime, reserved
+      )
+    values (#{oid,jdbcType=INTEGER}, #{gid,jdbcType=INTEGER}, #{count,jdbcType=INTEGER}, 
+      #{money,jdbcType=INTEGER}, now(), #{reserved,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.linxingjie.pojo.OrderDetail" >
+    update tb_orderdetail
+    set oid = #{oid,jdbcType=INTEGER},
+      gid = #{gid,jdbcType=INTEGER},
+      count = #{count,jdbcType=INTEGER},
+      money = #{money,jdbcType=INTEGER},
+      creattime = #{creattime,jdbcType=TIMESTAMP},
+      reserved = #{reserved,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
